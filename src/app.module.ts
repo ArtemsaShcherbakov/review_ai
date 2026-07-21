@@ -1,7 +1,15 @@
 import { Module } from '@nestjs/common';
-import { GitHubModule } from './modules/github/github.module';
+import { ConfigModule } from '@nestjs/config';
+
+import { ReviewModule } from './modules/review/review.module';
 
 @Module({
-  imports: [GitHubModule],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+    ReviewModule,
+  ],
 })
 export class AppModule {}
