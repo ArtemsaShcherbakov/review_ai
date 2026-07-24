@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 
 import { HttpService } from '../http/http.service';
 
+import { type IAiReview } from '../types/openroute.type';
+
 interface IBody<T> {
   apiKey: string;
   model: string;
@@ -44,7 +46,11 @@ export class OpenrouterService {
     };
   }
 
-  async sendInModel<T>(apiKey: string, model: string, messages: T[]) {
+  async sendInModel<T>(
+    apiKey: string,
+    model: string,
+    messages: T[],
+  ): Promise<IAiReview | null> {
     const body = this.createBody({
       apiKey,
       model,
@@ -52,7 +58,10 @@ export class OpenrouterService {
     });
 
     try {
-      const response = await this.httpService.fetchData(this.url, body);
+      const response: IAiReview | null = await this.httpService.fetchData(
+        this.url,
+        body,
+      );
 
       return response;
     } catch (error) {

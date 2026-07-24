@@ -1,11 +1,15 @@
 import { Controller, Param, Get, Res, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { type Response } from 'express';
+import type { Response } from 'express';
 
 import { GitHubService } from '../github/github.service';
 import { OpenrouterService } from '../openroute/openroute.service';
 
+import { jsonParse } from 'src/helpers/json-parse';
+
 import { SYSTEM_PROMT } from './review.constants';
+
+import type { IReview } from '../types/review.types';
 
 @Controller()
 export class ReviewController {
@@ -56,6 +60,28 @@ export class ReviewController {
         .json({ isError: true, textError: 'Не удалось провести ревью' });
     }
 
-    return res.status(HttpStatus.OK).json({ isError: false, aiReview });
+    const content = aiReview.choices[0].message.content;
+    const comments = jsonParse<IReview[] | null>(content);
+
+    // Получение последнего коммита в pull request
+    const commitId = await this.gitHubService.getLastCommitSha(params);
+
+    if (!commitId) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        isError: true,
+        textError: 'Не удалось получить последний коммит',
+      });
+    }
+
+    // Создание комментариев в pull request
+    comments?.forEach((review) =>
+      this.gitHubService.createCommentForPullRequest(
+        params,
+        review as IReview,
+        commitId,
+      ),
+    );
+
+    return res.status(HttpStatus.OK).json({ isError: false, comments });
   }
 }
