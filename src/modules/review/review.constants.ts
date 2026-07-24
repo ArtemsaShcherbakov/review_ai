@@ -18,7 +18,7 @@ export const SYSTEM_PROMT = `Ты — Senior Software Engineer с 10-летни�
 Ответ предоставляй строго в формате JSON, где каждый комментарий — это объект со следующими полями:
 
 {
-  "file": "имя_файла",
+  "fileName": "имя_файла",
   "line": номер_строки (если применимо),
   "severity": "critical" | "major" | "minor" | "suggestion",
   "category": "logic" | "security" | "performance" | "readability" | "testing",
