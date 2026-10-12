@@ -19,7 +19,7 @@ export class GitHubService {
 
   constructor(
     private readonly httpService: HttpService,
-    private configService: ConfigService,
+    private readonly configService: ConfigService,
   ) {
     this.url = this.configService.get<string>('GIT_HUB_API') || '';
     this.headers = {

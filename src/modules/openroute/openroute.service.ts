@@ -46,11 +46,15 @@ export class OpenrouterService {
     };
   }
 
-  async sendInModel<T>(
-    apiKey: string,
-    model: string,
-    messages: T[],
-  ): Promise<IAiReview | null> {
+  async sendInModel<T>({
+    apiKey,
+    model,
+    messages,
+  }: {
+    apiKey: string;
+    model: string;
+    messages: T[];
+  }): Promise<IAiReview | string | null> {
     const body = this.createBody({
       apiKey,
       model,
